@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import, unicode_literals
-
 import os
 
 import environ
@@ -18,7 +16,11 @@ env = environ.Env(
     DJANGO_ALLOWED_HOSTS=(list, []),
     DJANGO_STATIC_ROOT=(str, str(APPS_DIR('staticfiles'))),
     DJANGO_MEDIA_ROOT=(str, str(APPS_DIR('media'))),
-    DJANGO_DATABASE_URL=(str, 'postgis:///demigos'),
+    POSTGRES_HOST=(str, 'db'),
+    POSTGRES_PORT=(int, 5432),
+    POSTGRES_DB=(str, ''),
+    POSTGRES_USER=(str, ''),
+    POSTGRES_PASSWORD=(str, ''),
     DJANGO_EMAIL_URL=(environ.Env.email_url_config, 'consolemail://'),
     DJANGO_DEFAULT_FROM_EMAIL=(str, 'admin@example.com'),
     DJANGO_EMAIL_BACKEND=(str, 'django.core.mail.backends.smtp.EmailBackend'),
@@ -27,12 +29,10 @@ env = environ.Env(
     DJANGO_CELERY_BROKER_URL=(str, 'redis://localhost:6379/0'),
     DJANGO_CELERY_BACKEND=(str, 'redis://localhost:6379/0'),
     DJANGO_CELERY_ALWAYS_EAGER=(bool, False),
-    
-    DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
+
     DJANGO_TEST_RUN=(bool, False),
 
     DJANGO_HEALTH_CHECK_BODY=(str, 'Success'),
-    DJANGO_USE_SILK=(bool, False),
 )
 
 environ.Env.read_env()
@@ -60,8 +60,16 @@ USE_L10N = True
 USE_TZ = True
 
 DATABASES = {
-    'default': env.db('DJANGO_DATABASE_URL')
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': env('POSTGRES_PORT'),
+    }
 }
+
 
 DJANGO_APPS = (
     'django.contrib.auth',
@@ -79,16 +87,15 @@ THIRD_PARTY_APPS = (
 )
 
 LOCAL_APPS = (
-    'demigos.common.apps.CommonConfig',
     'demigos.users.apps.UsersConfig',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 AUTH_USER_MODEL = 'users.User'
-ADMIN_URL = r'^admin/'
+ADMIN_URL = 'admin/'
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -220,41 +227,5 @@ if os.environ.get('SENTRY_DSN'):
         'release': raven.fetch_git_sha(str(ROOT_DIR)),
     }
 
-USE_DEBUG_TOOLBAR = env.bool('DJANGO_USE_DEBUG_TOOLBAR')
-if USE_DEBUG_TOOLBAR:
-    MIDDLEWARE_CLASSES += [
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    ]
-    INSTALLED_APPS += (
-        'debug_toolbar',
-    )
-    DEBUG_TOOLBAR_CONFIG = {
-        'DISABLE_PANELS': [
-            'debug_toolbar.panels.redirects.RedirectsPanel',
-        ],
-        'SHOW_TEMPLATE_CONTEXT': True,
-        'SHOW_TOOLBAR_CALLBACK': lambda request: True,
-    }
-
-    DEBUG_TOOLBAR_PATCH_SETTINGS = False
-
-    # http://django-debug-toolbar.readthedocs.org/en/latest/installation.html
-    INTERNAL_IPS = ('127.0.0.1', '0.0.0.0', '10.0.2.2')
-
 if env.bool('DJANGO_TEST_RUN'):
     pass
-
-HEALTH_CHECK_BODY = env('DJANGO_HEALTH_CHECK_BODY')
-
-# Silk config
-USE_SILK = env('DJANGO_USE_SILK')
-if USE_SILK:
-    INSTALLED_APPS += (
-        'silk',
-    )
-    MIDDLEWARE_CLASSES += [
-        'silk.middleware.SilkyMiddleware',
-    ]
-    SILKY_AUTHENTICATION = True  # User must login
-    SILKY_AUTHORISATION = True  # User must have permissions
-    SILKY_PERMISSIONS = lambda user: user.is_superuser

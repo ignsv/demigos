@@ -1,0 +1,29 @@
+version: '2'
+services:
+  'db':
+    build:
+      context: .
+      dockerfile: docker/postgresql/Dockerfile
+    env_file: .envs/db.env
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+
+  'app':
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    volumes:
+      - ./:/app
+    env_file:
+      - .envs/app.env
+      - .envs/db.env
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+    restart: on-failure:10
+
+  'redis':
+    image: redis
+
