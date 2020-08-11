@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Avg
 
 
 class Pair(models.Model):
@@ -11,6 +12,14 @@ class Pair(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def average_volume(self):
+        return self.records.aggregate(average=Avg('volume'))['average']
+
+    @property
+    def last_volume(self):
+        return self.records.last().volume if self.records.last() else None
 
 
 class PairRecord(models.Model):
