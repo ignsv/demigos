@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Pair page{% endblock %}
+
+{% block content %}
+{% if object.last_volume %}
+    <p>Last price - {{ object.last_volume }}</p>
+    <p>Average for 60 seconds price - {{ object.average_volume }}</p>
+{% else %}
+    <p>Refresh for server update</p>
+{% endif %}
+{% endblock content %}

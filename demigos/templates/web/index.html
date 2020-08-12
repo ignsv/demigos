@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Index page{% endblock %}
+
+{% block content %}
+{%  for object in objects %}
+    <a href="{% url 'pair-detail' object.id %}">{{ object.name }}</a>
+{% endfor %}
+{% endblock content %}
