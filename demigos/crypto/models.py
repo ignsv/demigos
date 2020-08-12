@@ -4,7 +4,7 @@ from django.db.models import Avg
 
 
 class Pair(models.Model):
-    name = models.CharField(_('Pair name'), max_length=255, help_text=_('Maximum length is 255 symbols'))
+    name = models.CharField(_('Pair name'), max_length=255, help_text=_('Maximum length is 255 symbols'), unique=True)
 
     class Meta:
         verbose_name = _('Pair')

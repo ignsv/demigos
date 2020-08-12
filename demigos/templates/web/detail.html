@@ -3,10 +3,12 @@
 {% block title %}Pair page{% endblock %}
 
 {% block content %}
+    <h2>{{ object.name }}</h2>
 {% if object.last_volume %}
     <p>Last price - {{ object.last_volume }}</p>
     <p>Average for 60 seconds price - {{ object.average_volume }}</p>
 {% else %}
     <p>Refresh for server update</p>
 {% endif %}
+    <h2><a href="{% url 'index' %}">Home</a></h2>
 {% endblock content %}
