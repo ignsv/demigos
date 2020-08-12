@@ -20,6 +20,10 @@ Start containers in detached mode (go to localhost:8000 when all containers up)
 ```bash
 $ docker-compose -f local.yml up -d
 ```
+Create BTC-USD model from fixture to start retrieving data
+```bash
+$ docker-compose -f local.yml run --rm app ./manage.py loaddata btc_usd.json
+```
 Create superuser
 ```bash
 $ docker-compose -f local.yml run --rm app ./manage.py createsuperuser

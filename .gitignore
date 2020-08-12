@@ -50,6 +50,13 @@ htmlcov
 # npm
 node_modules/
 
+# celery beat
+celerybeat*
+
+# celery beat schedule file
+celerybeat-schedule
+
+
 # Compass
 .sass-cache
 

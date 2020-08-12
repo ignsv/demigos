@@ -88,6 +88,7 @@ THIRD_PARTY_APPS = (
 
 LOCAL_APPS = (
     'demigos.users.apps.UsersConfig',
+    'demigos.crypto.apps.CryptoConfig',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

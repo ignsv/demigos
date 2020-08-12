@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Index page{% endblock %}
+
+{% block content %}
+{%  for object in objects %}
+    <a href="{% url 'pair-detail' object.id %}">{{ object.name }}</a>
+    </br>
+{% endfor %}
+
+    </br>
+    <form action="{% url 'index' %}"
+              method="post"
+              class="auth-form-register">
+            {% csrf_token %}
+
+
+            {{ form.non_field_errors }}
+
+            <div class="form-group row align-items-center">
+                <label class="col-xs-12 col-md-4 col-form-label"
+                       for="{{ form.name.id_for_label }}">
+                    Pair Name
+                </label>
+                <div class="col-xs-12 col-md-8">
+                    {{ form.name }}
+                </div>
+                <div class="invalid-feedback">
+                    {{ form.name.errors }}
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <input type="submit"
+                       value="Add pair"
+                       class="btn btn-primary mr-1">
+                </div>
+
+        </form>
+{% endblock content %}
